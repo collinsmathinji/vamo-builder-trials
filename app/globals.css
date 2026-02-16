@@ -1,0 +1,186 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Warm "Tropical Studio" – cream, teal, amber */
+    --background: 40 33% 98%;
+    --foreground: 24 10% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 24 10% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 24 10% 14%;
+    --primary: 172 66% 32%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 25% 94%;
+    --secondary-foreground: 24 10% 20%;
+    --muted: 40 20% 94%;
+    --muted-foreground: 24 8% 42%;
+    --accent: 38 92% 50%;
+    --accent-foreground: 24 20% 10%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 40 18% 88%;
+    --input: 40 18% 88%;
+    --ring: 172 66% 32%;
+    --radius: 0.75rem;
+    --chart-1: 172 66% 40%;
+    --chart-2: 38 92% 50%;
+    --chart-3: 24 10% 30%;
+    --chart-4: 142 45% 45%;
+    --chart-5: 280 50% 50%;
+    /* Extra tokens for unique look */
+    --warm-gradient-start: 40 35% 97%;
+    --warm-gradient-end: 45 30% 92%;
+    --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    --card-border: 40 18% 90%;
+    --auth-grid-line: 24 8% 88%;
+    --auth-grid-size: 72px;
+    --auth-grid-glow-left: 172 40% 85%;
+    --auth-grid-glow-right: 28 50% 88%;
+  }
+  .dark {
+    --background: 24 12% 8%;
+    --foreground: 40 15% 95%;
+    --card: 24 12% 10%;
+    --card-foreground: 40 15% 95%;
+    --popover: 24 12% 10%;
+    --popover-foreground: 40 15% 95%;
+    --primary: 172 55% 45%;
+    --primary-foreground: 24 20% 8%;
+    --secondary: 24 10% 18%;
+    --secondary-foreground: 40 15% 90%;
+    --muted: 24 10% 18%;
+    --muted-foreground: 40 10% 55%;
+    --accent: 38 90% 55%;
+    --accent-foreground: 24 20% 8%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 24 12% 20%;
+    --input: 24 12% 20%;
+    --ring: 172 55% 45%;
+    --chart-1: 172 55% 50%;
+    --chart-2: 38 90% 55%;
+    --chart-3: 40 15% 75%;
+    --chart-4: 142 45% 50%;
+    --chart-5: 280 50% 55%;
+    --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.2), 0 1px 2px -1px rgb(0 0 0 / 0.2);
+    --card-border: 24 12% 22%;
+    --warm-gradient-start: 24 12% 10%;
+    --warm-gradient-end: 24 10% 6%;
+    --auth-grid-line: 24 10% 26%;
+    --auth-grid-glow-left: 172 45% 25%;
+    --auth-grid-glow-right: 28 40% 28%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    -webkit-tap-highlight-color: transparent;
+    text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased min-h-[100dvh];
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
+  }
+  /* Touch-friendly minimum target size */
+  button, a, [role="button"], input, select, textarea {
+    @apply touch-manipulation;
+  }
+}
+
+/* Large grid fading out from center + corner glows – theme-aware */
+.bg-warm-mesh {
+  --grid-size: var(--auth-grid-size, 72px);
+  position: relative;
+  background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(ellipse 100% 80% at 0% 100%, hsl(var(--auth-grid-glow-left) / 0.2), transparent 55%),
+    radial-gradient(ellipse 100% 80% at 100% 100%, hsl(var(--auth-grid-glow-right) / 0.2), transparent 55%),
+    radial-gradient(ellipse 80% 50% at 50% -20%, hsl(var(--accent) / 0.18), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 50%, hsl(var(--primary) / 0.12), transparent),
+    radial-gradient(ellipse 50% 30% at 0% 80%, hsl(var(--primary) / 0.1), transparent);
+}
+.bg-warm-mesh::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent calc(var(--grid-size) - 1px),
+      hsl(var(--auth-grid-line) / 0.5) calc(var(--grid-size) - 1px),
+      hsl(var(--auth-grid-line) / 0.5) var(--grid-size)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent calc(var(--grid-size) - 1px),
+      hsl(var(--auth-grid-line) / 0.5) calc(var(--grid-size) - 1px),
+      hsl(var(--auth-grid-line) / 0.5) var(--grid-size)
+    );
+  mask-image: radial-gradient(ellipse 85% 85% at 50% 45%, black 0%, black 25%, transparent 72%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 85% at 50% 45%, black 0%, black 25%, transparent 72%);
+  mask-size: 100% 100%;
+  mask-position: center;
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-position: center;
+}
+.dark .bg-warm-mesh {
+  background-image:
+    radial-gradient(ellipse 90% 70% at 0% 100%, hsl(var(--auth-grid-glow-left) / 0.35), transparent 50%),
+    radial-gradient(ellipse 90% 70% at 100% 100%, hsl(var(--auth-grid-glow-right) / 0.3), transparent 50%),
+    radial-gradient(ellipse 80% 50% at 50% -20%, hsl(var(--primary) / 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 50%, hsl(var(--accent) / 0.06), transparent),
+    radial-gradient(ellipse 50% 30% at 0% 80%, hsl(var(--primary) / 0.08), transparent);
+}
+.dark .bg-warm-mesh::before {
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent calc(var(--grid-size) - 1px),
+      hsl(var(--auth-grid-line) / 0.45) calc(var(--grid-size) - 1px),
+      hsl(var(--auth-grid-line) / 0.45) var(--grid-size)
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent calc(var(--grid-size) - 1px),
+      hsl(var(--auth-grid-line) / 0.45) calc(var(--grid-size) - 1px),
+      hsl(var(--auth-grid-line) / 0.45) var(--grid-size)
+    );
+}
+
+/* Card lift for key surfaces */
+.card-lift {
+  box-shadow: var(--card-shadow);
+  border: 1px solid hsl(var(--card-border));
+}
+
+/* Safe area for notched devices */
+.safe-top { padding-top: env(safe-area-inset-top, 0); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0); }
+.safe-left { padding-left: env(safe-area-inset-left, 0); }
+.safe-right { padding-right: env(safe-area-inset-right, 0); }
+
+/* Marquee scroll for landing cards & comments */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 35s linear infinite;
+}
+.animate-marquee-slow {
+  animation: marquee 45s linear infinite;
+}
