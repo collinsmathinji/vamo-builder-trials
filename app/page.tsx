@@ -2,19 +2,19 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
-import { Store, ArrowRight, MessageSquare, BarChart3, TrendingUp, LayoutDashboard, Wallet, FolderKanban } from "lucide-react";
+import { Store, ArrowRight, MessageSquare, BarChart3, TrendingUp, LayoutDashboard, Wallet, FolderKanban, Linkedin } from "lucide-react";
 
-/* Profile image URLs: initials-based avatars for social proof cards */
+/* Real profile photos for social proof cards (human faces) */
 const SOCIAL_AVATARS = {
-  jordan: "https://ui-avatars.com/api/?name=Jordan+Kim&size=96&background=17296a&color=fff",
-  morgan: "https://ui-avatars.com/api/?name=Morgan+Lee&size=96&background=0a66c2&color=fff",
-  casey: "https://ui-avatars.com/api/?name=Casey+Drew&size=96&background=e4405f&color=fff",
+  jordan: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=96&h=96&fit=crop&crop=face",
+  morgan: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=96&h=96&fit=crop&crop=face",
+  casey: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=96&h=96&fit=crop&crop=face",
 } as const;
 
 const SOCIAL_CARDS = [
-  { platform: "x", name: "Jordan Kim", handle: "@jordanbuilds", text: "Finally shipped my side project using @vamo — the progress logging + pineapples actually kept me accountable.", avatar: SOCIAL_AVATARS.jordan },
-  { platform: "linkedin", name: "Morgan Lee", title: "Builder", text: "Stopped planning, started shipping. Vamo’s builder and wallet made it simple to track progress and redeem rewards.", avatar: SOCIAL_AVATARS.morgan },
-  { platform: "instagram", name: "casey.drew", handle: "Solo founder", text: "Built the MVP in a week. Best thing for solo founders who want to ship and get rewarded for real progress. 🍍", avatar: SOCIAL_AVATARS.casey },
+  { platform: "x", name: "Jordan Kim", handle: "@jordanbuilds", date: "Jun 5", text: "Finally shipped my side project using @vamo — the progress logging + pineapples actually kept me accountable.", avatar: SOCIAL_AVATARS.jordan },
+  { platform: "linkedin", name: "Morgan Lee", title: "Builder", date: "Jun 1", text: "Stopped planning, started shipping. Vamo’s builder and wallet made it simple to track progress and redeem rewards.", avatar: SOCIAL_AVATARS.morgan },
+  { platform: "instagram", name: "casey.drew", handle: "Solo founder", date: "May 28", text: "Built the MVP in a week. Best thing for solo founders who want to ship and get rewarded for real progress. 🍍", avatar: SOCIAL_AVATARS.casey },
 ] as const;
 import { VamoLogo } from "@/components/VamoLogo";
 import { FounderAtDesk } from "@/components/FounderAtDesk";
@@ -80,6 +80,9 @@ export default async function HomePage() {
           <div className="relative z-10 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left: minimal copy */}
             <div className="order-2 lg:order-1">
+              <p className="font-heading text-sm sm:text-base font-semibold uppercase tracking-wider text-foreground/90 dark:text-foreground/80 mb-3 pl-4 border-l-2 border-primary/60">
+                Are you really a cracked founder?
+              </p>
               <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-foreground leading-tight mb-4">
                 Build, log, <span className="text-primary">ship.</span>
               </h1>
@@ -230,22 +233,30 @@ export default async function HomePage() {
                   key={card.platform}
                   className="rounded-2xl border border-border/80 bg-card shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                 >
-                  {/* Platform bar */}
-                  <div className={`flex items-center gap-2 px-4 py-2.5 text-white text-xs font-medium ${
+                  {/* Platform bar with icon + label + date */}
+                  <div className={`flex items-center justify-between gap-2 px-4 py-2.5 text-white text-xs font-medium ${
                     card.platform === "x" ? "bg-[#0f1419] dark:bg-[#16181c]" :
                     card.platform === "linkedin" ? "bg-[#0a66c2]" :
                     "bg-gradient-to-r from-[#f58529] via-[#dd2a7b] to-[#8134af]"
                   }`}>
-                    {card.platform === "x" && <span className="font-bold">𝕏</span>}
-                    {card.platform === "linkedin" && <span>in</span>}
-                    {card.platform === "instagram" && <span>Instagram</span>}
+                    <div className="flex items-center gap-2">
+                      {card.platform === "x" && <span className="font-bold text-base">𝕏</span>}
+                      {card.platform === "linkedin" && <Linkedin className="h-4 w-4 shrink-0" />}
+                      {card.platform === "instagram" && (
+                        <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                        </svg>
+                      )}
+                      <span>{card.platform === "x" ? "X" : card.platform === "linkedin" ? "LinkedIn" : "Instagram"}</span>
+                    </div>
+                    {"date" in card && <span className="text-white/80 tabular-nums">{card.date}</span>}
                   </div>
                   <div className="p-4">
                     <div className="flex gap-3">
                       <img
                         src={card.avatar}
                         alt=""
-                        className="h-12 w-12 rounded-full object-cover shrink-0"
+                        className="h-14 w-14 rounded-full object-cover shrink-0 ring-2 ring-border/50"
                       />
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold text-foreground text-sm truncate">{card.name}</p>
