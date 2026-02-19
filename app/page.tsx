@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
-import { Store, ArrowRight, Sparkles, TrendingUp, LayoutDashboard, Wallet, FolderKanban } from "lucide-react";
+import { Store, ArrowRight, MessageSquare, BarChart3, TrendingUp, LayoutDashboard, Wallet, FolderKanban } from "lucide-react";
 
 /* Profile image URLs: initials-based avatars for social proof cards */
 const SOCIAL_AVATARS = {
@@ -130,9 +130,9 @@ export default async function HomePage() {
               {/* Connector line (desktop) */}
               <div className="hidden sm:block absolute top-[4.5rem] left-[16.666%] right-[16.666%] h-0.5 bg-gradient-to-r from-transparent via-primary/50 to-transparent" aria-hidden />
               {[
-                { step: "01", label: "Describe", desc: "Tell us what you're building. We help you get a version up.", icon: Sparkles, accent: "primary" as const },
-                { step: "02", label: "Log progress", desc: "Track features, users, revenue. Earn pineapples.", icon: TrendingUp, accent: "accent" as const },
-                { step: "03", label: "Redeem", desc: "Turn pineapples into rewards you actually use.", emoji: true, accent: "primary" as const },
+                { step: "01", label: "Describe", desc: "Describe your app in a few sentences. We turn it into a working version you can open and use.", icon: MessageSquare, accent: "primary" as const },
+                { step: "02", label: "Log progress", desc: "Log what you ship—features, signups, revenue. Each update earns pineapples.", icon: BarChart3, accent: "accent" as const },
+                { step: "03", label: "Redeem", desc: "Spend pineapples on rewards you’ll use: gift cards, credits, and perks.", emoji: true, accent: "primary" as const },
               ].map((item) => {
                 const Icon = "icon" in item ? item.icon : null;
                 return (
@@ -148,7 +148,7 @@ export default async function HomePage() {
                       <div className={`flex h-16 w-16 items-center justify-center rounded-2xl mb-5 ${
                         item.accent === "accent" ? "bg-accent/15 text-accent" : "bg-primary/15 text-primary"
                       } group-hover:scale-110 transition-transform duration-300`}>
-                        {Icon ? <Icon className="h-8 w-8" /> : <span className="text-4xl">🍍</span>}
+                        {Icon ? <Icon className="h-8 w-8" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round" /> : <span className="text-4xl" aria-hidden>🍍</span>}
                       </div>
                       <h3 className="text-foreground font-bold text-xl mb-2">{item.label}</h3>
                       <p className="text-muted-foreground text-sm leading-relaxed flex-1">{item.desc}</p>
@@ -261,7 +261,7 @@ export default async function HomePage() {
         </section>
 
         {/* See inside Vamo — dashboard screenshots */}
-        <section className="border-t border-border/60 bg-muted/20 py-14 md:py-20" aria-label="See inside Vamo">
+        <section className="border-t border-border/60 bg-muted/10 py-14 md:py-20" aria-label="See inside Vamo">
           <div className="container px-4 sm:px-6">
             <div className="text-center max-w-2xl mx-auto mb-12">
               <h2 className="font-heading text-2xl sm:text-3xl font-semibold text-foreground mb-3">
@@ -301,9 +301,17 @@ export default async function HomePage() {
           </div>
         </section>
 
+        {/* Transition strip: shifts from “See inside” to “Marketplace” */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-border to-transparent" aria-hidden />
+        <div className="border-t border-border bg-muted/40 dark:bg-muted/50 py-1" aria-hidden />
+
         {/* Marketplace */}
-        <section className="border-t border-border/60 bg-muted/20">
-          <div className="container px-4 sm:px-6 py-12 md:py-14">
+        <section className="border-t border-border/80 relative overflow-hidden">
+          {/* Same background as How it works: gradient + soft orbs */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background via-40% to-accent/10 dark:from-primary/20 dark:to-accent/15" aria-hidden />
+          <div className="absolute top-1/4 -left-20 w-72 h-72 rounded-full bg-primary/20 dark:bg-primary/30 blur-3xl animate-step-glow pointer-events-none" aria-hidden />
+          <div className="absolute bottom-1/4 -right-20 w-96 h-96 rounded-full bg-accent/15 dark:bg-accent/20 blur-3xl animate-step-glow animate-step-glow-delay-1 pointer-events-none" aria-hidden />
+          <div className="container relative px-4 sm:px-6 py-12 md:py-14">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
               <div>
                 <h2 className="font-heading text-xl sm:text-2xl font-semibold text-foreground">Marketplace</h2>
