@@ -249,7 +249,7 @@ export default async function HomePage() {
                       />
                       <div className="min-w-0 flex-1">
                         <p className="font-semibold text-foreground text-sm truncate">{card.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">{card.handle || card.title}</p>
+                        <p className="text-xs text-muted-foreground truncate">{"handle" in card ? card.handle : card.title}</p>
                       </div>
                     </div>
                     <p className="mt-3 text-sm text-foreground/90 leading-relaxed">{card.text}</p>
