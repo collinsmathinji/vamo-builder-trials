@@ -184,3 +184,14 @@
 .animate-marquee-slow {
   animation: marquee 45s linear infinite;
 }
+
+/* How it works – subtle glow pulse */
+@keyframes step-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.animate-step-glow {
+  animation: step-glow 3s ease-in-out infinite;
+}
+.animate-step-glow-delay-1 { animation-delay: 0.5s; }
+.animate-step-glow-delay-2 { animation-delay: 1s; }
