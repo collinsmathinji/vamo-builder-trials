@@ -1,1 +1,0 @@
-self.__REACT_LOADABLE_MANIFEST="{\"components\\\\FounderAtDesk.tsx -> ./VoxelFounderScene\":{\"id\":\"components\\\\FounderAtDesk.tsx -> ./VoxelFounderScene\",\"files\":[\"static/chunks/_app-pages-browser_components_VoxelFounderScene_tsx.js\"]}}"
