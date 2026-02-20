@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppShell } from "@/components/AppShell";
-import { Plus, ArrowRight, TrendingUp } from "lucide-react";
+import { Plus, ArrowRight, TrendingUp, LayoutDashboard } from "lucide-react";
 
 export default async function ProjectsPage() {
   const supabase = await createClient();
@@ -13,7 +13,7 @@ export default async function ProjectsPage() {
 
   const { data: projects } = await supabase
     .from("projects")
-    .select("id, name, description, status, progress_score, created_at")
+    .select("id, name, description, status, progress_score, screenshot_url, created_at")
     .eq("owner_id", user.id)
     .order("updated_at", { ascending: false });
 
@@ -53,8 +53,22 @@ export default async function ProjectsPage() {
         <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((p) => (
             <Link key={p.id} href={`/builder/${p.id}`} className="block min-w-0">
-              <Card className="h-full card-lift rounded-2xl border-2 transition-all hover:shadow-lg hover:border-primary/30 active:scale-[0.99] overflow-hidden group">
-                <CardHeader className="pb-2 px-4 sm:px-6 pt-4 sm:pt-6">
+              <Card className="h-full card-lift rounded-2xl border-2 transition-all hover:shadow-lg hover:border-primary/30 active:scale-[0.99] overflow-hidden group flex flex-col">
+                {/* Thumbnail */}
+                <div className="relative w-full aspect-video bg-muted/50 shrink-0 overflow-hidden">
+                  {p.screenshot_url ? (
+                    <img
+                      src={p.screenshot_url}
+                      alt=""
+                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-muted/80 to-muted/40">
+                      <LayoutDashboard className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground/50" />
+                    </div>
+                  )}
+                </div>
+                <CardHeader className="pb-2 px-4 sm:px-6 pt-4 sm:pt-6 flex-1 min-w-0">
                   <CardTitle className="font-heading text-base sm:text-lg group-hover:text-primary transition-colors flex items-center justify-between gap-2">
                     <span className="truncate">{p.name}</span>
                     <ArrowRight className="h-4 w-4 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -63,7 +77,7 @@ export default async function ProjectsPage() {
                     <CardDescription className="font-body text-sm line-clamp-2">{p.description}</CardDescription>
                   )}
                 </CardHeader>
-                <CardContent className="flex flex-col gap-2 px-4 sm:px-6 pb-4 sm:pb-6">
+                <CardContent className="flex flex-col gap-2 px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
                   <div className="flex items-center justify-between gap-2">
                     <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-muted-foreground min-w-0">
                       <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary shrink-0" />

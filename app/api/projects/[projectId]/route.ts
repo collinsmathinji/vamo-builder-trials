@@ -31,13 +31,33 @@ export async function PATCH(
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json();
-  const { name, screenshot_url: screenshotUrl } = body as { name?: string; screenshot_url?: string | null };
-  const updates: { name?: string; screenshot_url?: string | null; updated_at: string } = {
-    updated_at: new Date().toISOString(),
+  const {
+    name,
+    description,
+    url,
+    why_built: whyBuilt,
+    screenshot_url: screenshotUrl,
+  } = body as {
+    name?: string;
+    description?: string | null;
+    url?: string | null;
+    why_built?: string | null;
+    screenshot_url?: string | null;
   };
+  const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (typeof name === "string") {
     const trimmed = name.trim().slice(0, 100);
     if (trimmed) updates.name = trimmed;
+  }
+  if (description !== undefined) {
+    updates.description = typeof description === "string" ? description.trim().slice(0, 500) || null : null;
+  }
+  if (url !== undefined) {
+    const u = typeof url === "string" ? url.trim() : "";
+    updates.url = u && /^https?:\/\//i.test(u) ? u : null;
+  }
+  if (whyBuilt !== undefined) {
+    updates.why_built = typeof whyBuilt === "string" ? whyBuilt.trim().slice(0, 1000) || null : null;
   }
   if (screenshotUrl !== undefined) {
     updates.screenshot_url = typeof screenshotUrl === "string" && screenshotUrl.trim() ? screenshotUrl.trim() : null;
