@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { trackEvent } from "@/lib/analytics";
@@ -17,8 +17,44 @@ import {
 } from "@/components/ui/card";
 import { toast } from "sonner";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Loader2, ImagePlus, X } from "lucide-react";
 import { VamoLogo } from "@/components/VamoLogo";
+
+const SCREENSHOT_BUCKET = "project-screenshots";
+
+function compressImageForUpload(file: File): Promise<File | Blob> {
+  const skipIfUnder = 280 * 1024;
+  const maxWidth = 1200;
+  const quality = 0.78;
+  if (file.size <= skipIfUnder && !file.type.includes("png")) return Promise.resolve(file);
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const w = img.naturalWidth;
+      const h = img.naturalHeight;
+      const scale = Math.min(1, maxWidth / w, maxWidth / h);
+      const cw = Math.max(1, Math.round(w * scale));
+      const ch = Math.max(1, Math.round(h * scale));
+      const canvas = document.createElement("canvas");
+      canvas.width = cw;
+      canvas.height = ch;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        resolve(file);
+        return;
+      }
+      ctx.drawImage(img, 0, 0, cw, ch);
+      canvas.toBlob((blob) => resolve(blob ?? file), "image/jpeg", quality);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(file);
+    };
+    img.src = url;
+  });
+}
 
 const MAX_NAME = 100;
 const MAX_DESC = 500;
@@ -34,9 +70,12 @@ export default function NewProjectPage() {
   const [description, setDescription] = useState("");
   const [url, setUrl] = useState("");
   const [whyBuilt, setWhyBuilt] = useState("");
+  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -74,6 +113,24 @@ export default function NewProjectPage() {
       if (error) {
         toast.error(error.message || "Failed to create project.");
         return;
+      }
+
+      if (screenshotFile && project.id) {
+        const body = await compressImageForUpload(screenshotFile);
+        const ext = body instanceof Blob && !(body instanceof File) ? "jpg" : (screenshotFile.name.replace(/^.*\./, "") || "jpg");
+        const path = `${user.id}/${project.id}/screenshot.${ext}`;
+        const contentType = body instanceof Blob && !(body instanceof File) ? "image/jpeg" : screenshotFile.type;
+        const { data: uploadData, error: uploadErr } = await supabase.storage
+          .from(SCREENSHOT_BUCKET)
+          .upload(path, body, { upsert: true, contentType });
+        if (!uploadErr && uploadData) {
+          const { data: urlData } = supabase.storage.from(SCREENSHOT_BUCKET).getPublicUrl(uploadData.path);
+          await fetch(`/api/projects/${project.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: trimmedName, screenshot_url: urlData.publicUrl }),
+          });
+        }
       }
 
       await supabase.from("activity_events").insert({
@@ -157,6 +214,72 @@ export default function NewProjectPage() {
                 />
                 {errors.url && (
                   <p className="text-sm text-destructive">{errors.url}</p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label>Screenshot (optional)</Label>
+                <p className="text-xs text-muted-foreground">
+                  Fallback when your website URL can&apos;t be embedded in the preview (e.g. blocks iframes).
+                </p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file && file.type.startsWith("image/")) {
+                      setScreenshotFile(file);
+                      const reader = new FileReader();
+                      reader.onload = () => setScreenshotPreview(reader.result as string);
+                      reader.readAsDataURL(file);
+                    }
+                    e.target.value = "";
+                  }}
+                />
+                {!screenshotFile ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full gap-2"
+                    disabled={loading}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <ImagePlus className="h-4 w-4" />
+                    Upload screenshot
+                  </Button>
+                ) : (
+                  <div className="flex items-start gap-3 rounded-lg border border-border/60 bg-muted/30 p-3">
+                    <div className="relative h-20 w-28 shrink-0 overflow-hidden rounded-md bg-muted">
+                      {screenshotPreview && (
+                        <img
+                          src={screenshotPreview}
+                          alt="Screenshot preview"
+                          className="h-full w-full object-cover"
+                        />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium truncate">{screenshotFile.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Used as fallback if the URL can&apos;t be embedded
+                      </p>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="mt-2 h-8 gap-1.5 text-muted-foreground"
+                        disabled={loading}
+                        onClick={() => {
+                          setScreenshotFile(null);
+                          setScreenshotPreview(null);
+                        }}
+                      >
+                        <X className="h-3.5 w-3.5" />
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
                 )}
               </div>
               <div className="space-y-2">

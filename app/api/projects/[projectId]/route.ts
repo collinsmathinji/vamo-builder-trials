@@ -31,13 +31,22 @@ export async function PATCH(
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json();
-  const { name } = body as { name?: string };
-  const trimmed = typeof name === "string" ? name.trim().slice(0, 100) : null;
-  if (!trimmed) return NextResponse.json({ error: "Name required" }, { status: 400 });
+  const { name, screenshot_url: screenshotUrl } = body as { name?: string; screenshot_url?: string | null };
+  const updates: { name?: string; screenshot_url?: string | null; updated_at: string } = {
+    updated_at: new Date().toISOString(),
+  };
+  if (typeof name === "string") {
+    const trimmed = name.trim().slice(0, 100);
+    if (trimmed) updates.name = trimmed;
+  }
+  if (screenshotUrl !== undefined) {
+    updates.screenshot_url = typeof screenshotUrl === "string" && screenshotUrl.trim() ? screenshotUrl.trim() : null;
+  }
+  if (Object.keys(updates).length <= 1) return NextResponse.json({ error: "No updates" }, { status: 400 });
 
   const { data, error } = await supabase
     .from("projects")
-    .update({ name: trimmed, updated_at: new Date().toISOString() })
+    .update(updates)
     .eq("id", projectId)
     .eq("owner_id", user.id)
     .select()
