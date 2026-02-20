@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
-import { Store, ArrowRight, MessageSquare, BarChart3, TrendingUp, LayoutDashboard, Wallet, FolderKanban, Linkedin } from "lucide-react";
+import { Store, ArrowRight, MessageSquare, BarChart3, TrendingUp, LayoutDashboard, Wallet, FolderKanban, Linkedin, MessageCircle, Repeat2, Heart, Eye, Send, Bookmark, Share2, MoreHorizontal, ThumbsUp } from "lucide-react";
 
 /* Real profile photos for social proof cards (human faces) */
 const SOCIAL_AVATARS = {
@@ -21,9 +21,9 @@ import { FounderAtDesk } from "@/components/FounderAtDesk";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const DASHBOARD_SCREENSHOTS = [
-  { src: "/screenshots/dashboard-projects.png", label: "Your projects", caption: "Open a project or create a new one.", icon: FolderKanban },
-  { src: "/screenshots/dashboard-wallet.png", label: "Pineapple Wallet", caption: "Earn and redeem rewards for real progress.", icon: Wallet },
-  { src: "/screenshots/dashboard-preview.png", label: "Builder & preview", caption: "Chat, track traction, and see your app live.", icon: LayoutDashboard },
+  { src: "/screenshots/dashboard-projects.png", label: "Your projects", tagline: "Command center", caption: "Your command center — where every idea lands, progress shows, and nothing slips through the cracks.", icon: FolderKanban, variant: "primary" as const },
+  { src: "/screenshots/dashboard-wallet.png", label: "Pineapple Wallet", tagline: "Earn & redeem", caption: "Your rewards, clear as day. Earn for shipping, redeem when it counts — no fine print, just real value.", icon: Wallet, variant: "accent" as const },
+  { src: "/screenshots/dashboard-preview.png", label: "Builder & preview", tagline: "The workshop", caption: "The workshop. Build it, tweak it, see it live — then watch your vision become something people actually use.", icon: LayoutDashboard, variant: "muted" as const },
 ] as const;
 
 export default async function HomePage() {
@@ -222,51 +222,150 @@ export default async function HomePage() {
             </div>
           </div>
 
-          {/* Social proof: X, LinkedIn, Instagram style cards */}
+          {/* Social proof: X, LinkedIn, Instagram — real platform-style cards */}
           <div className="container px-4 sm:px-6 mt-12 md:mt-16">
             <p className="text-center text-sm font-medium text-muted-foreground mb-6">
               What founders share on X, LinkedIn & Instagram
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto">
-              {SOCIAL_CARDS.map((card) => (
-                <article
-                  key={card.platform}
-                  className="rounded-2xl border border-border/80 bg-card shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-                >
-                  {/* Platform bar with icon + label + date */}
-                  <div className={`flex items-center justify-between gap-2 px-4 py-2.5 text-white text-xs font-medium ${
-                    card.platform === "x" ? "bg-[#0f1419] dark:bg-[#16181c]" :
-                    card.platform === "linkedin" ? "bg-[#0a66c2]" :
-                    "bg-gradient-to-r from-[#f58529] via-[#dd2a7b] to-[#8134af]"
-                  }`}>
-                    <div className="flex items-center gap-2">
-                      {card.platform === "x" && <span className="font-bold text-base">𝕏</span>}
-                      {card.platform === "linkedin" && <Linkedin className="h-4 w-4 shrink-0" />}
-                      {card.platform === "instagram" && (
-                        <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                        </svg>
-                      )}
-                      <span>{card.platform === "x" ? "X" : card.platform === "linkedin" ? "LinkedIn" : "Instagram"}</span>
-                    </div>
-                    {"date" in card && <span className="text-white/80 tabular-nums">{card.date}</span>}
-                  </div>
-                  <div className="p-4">
-                    <div className="flex gap-3">
-                      <img
-                        src={card.avatar}
-                        alt=""
-                        className="h-14 w-14 rounded-full object-cover shrink-0 ring-2 ring-border/50"
-                      />
-                      <div className="min-w-0 flex-1">
-                        <p className="font-semibold text-foreground text-sm truncate">{card.name}</p>
-                        <p className="text-xs text-muted-foreground truncate">{"handle" in card ? card.handle : card.title}</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto items-stretch">
+              {/* X (Twitter) — real post layout: avatar left, name/handle row, then body, then engagement bar */}
+              <article
+                className="rounded-2xl border border-[#2f3336] bg-[#16181c] shadow-md overflow-hidden hover:shadow-lg transition-shadow dark:border-[#2f3336] flex flex-col min-h-[280px] relative"
+                style={{ colorScheme: "dark" }}
+              >
+                <button type="button" className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-white/10 text-[#71767b] hover:text-[#e7e9ea] transition-colors z-10" aria-label="More options">
+                  <MoreHorizontal className="h-4 w-4" />
+                </button>
+                <div className="p-4 sm:p-5 flex flex-col flex-1">
+                  <div className="flex gap-3">
+                    <img
+                      src={SOCIAL_AVATARS.jordan}
+                      alt=""
+                      className="h-12 w-12 rounded-full object-cover shrink-0"
+                    />
+                    <div className="min-w-0 flex-1 pr-6">
+                      <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+                        <span className="font-bold text-[15px] text-[#e7e9ea]">Jordan Kim</span>
+                        <span className="text-[15px] text-[#71767b]">@jordanbuilds</span>
+                        <span className="text-[#71767b]">·</span>
+                        <span className="text-[#71767b] text-[15px]">Jun 5</span>
                       </div>
+                      <p className="mt-1.5 text-[15px] text-[#e7e9ea] leading-snug break-words">
+                        Finally shipped my side project using @vamo — the progress logging + pineapples actually kept me accountable.
+                      </p>
                     </div>
-                    <p className="mt-3 text-sm text-foreground/90 leading-relaxed">{card.text}</p>
                   </div>
-                </article>
-              ))}
+                  <div className="mt-3 pt-3 flex flex-wrap items-center gap-6 text-[#71767b]">
+                    <button type="button" className="flex items-center gap-1.5 hover:text-[#1d9bf0] transition-colors rounded p-0.5 -m-0.5" aria-label="12 replies">
+                      <MessageCircle className="h-[18px] w-[18px]" strokeWidth="1.75" />
+                      <span className="text-[13px]">12</span>
+                    </button>
+                    <button type="button" className="flex items-center gap-1.5 hover:text-[#00ba7c] transition-colors rounded p-0.5 -m-0.5" aria-label="5 reposts">
+                      <Repeat2 className="h-[18px] w-[18px]" strokeWidth="1.75" />
+                      <span className="text-[13px]">5</span>
+                    </button>
+                    <button type="button" className="flex items-center gap-1.5 hover:text-[#f91880] transition-colors rounded p-0.5 -m-0.5" aria-label="89 likes">
+                      <Heart className="h-[18px] w-[18px]" strokeWidth="1.75" />
+                      <span className="text-[13px]">89</span>
+                    </button>
+                    <span className="text-[13px]">1.2K views</span>
+                    <div className="ml-auto flex items-center gap-1">
+                      <button type="button" className="p-1 rounded hover:bg-white/10 hover:text-[#1d9bf0] transition-colors" aria-label="Share">
+                        <Share2 className="h-[18px] w-[18px]" strokeWidth="1.75" />
+                      </button>
+                      <button type="button" className="p-1 rounded hover:bg-white/10 hover:text-[#1d9bf0] transition-colors" aria-label="Bookmark">
+                        <Bookmark className="h-[18px] w-[18px]" strokeWidth="1.75" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </article>
+
+              {/* LinkedIn — real post layout: avatar left, name + title + date, then body, then engagement */}
+              <article
+                className="rounded-2xl border border-[#38434f] bg-[#1a1f26] shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col min-h-[280px] relative"
+                style={{ colorScheme: "dark" }}
+              >
+                <button type="button" className="absolute top-3 right-3 p-1.5 rounded hover:bg-white/10 text-[#a0a4a8] hover:text-[#e7e9ea] transition-colors z-10" aria-label="More options">
+                  <MoreHorizontal className="h-4 w-4" />
+                </button>
+                <div className="p-4 sm:p-5 flex flex-col flex-1">
+                  <div className="flex gap-3">
+                    <img
+                      src={SOCIAL_AVATARS.morgan}
+                      alt=""
+                      className="h-12 w-12 rounded-full object-cover shrink-0"
+                    />
+                    <div className="min-w-0 flex-1 pr-6">
+                      <p className="font-semibold text-[15px] text-[#e7e9ea]">Morgan Lee</p>
+                      <p className="text-[12px] text-[#a0a4a8]">Builder · Jun 1</p>
+                      <p className="mt-2.5 text-[14px] text-[#e7e9ea] leading-snug break-words">
+                        Stopped planning, started shipping. Vamo&apos;s builder and wallet made it simple to track progress and redeem rewards.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-auto pt-4 border-t border-[#38434f] flex flex-wrap items-center gap-4 sm:gap-6 text-[#a0a4a8]">
+                    <button type="button" className="flex items-center gap-1.5 hover:text-[#0a66c2] transition-colors rounded p-0.5 -m-0.5" aria-label="24 likes">
+                      <ThumbsUp className="h-4 w-4" strokeWidth="1.75" />
+                      <span className="text-[13px] font-medium">24</span>
+                    </button>
+                    <button type="button" className="flex items-center gap-1.5 hover:text-[#0a66c2] transition-colors rounded p-0.5 -m-0.5" aria-label="3 comments">
+                      <MessageSquare className="h-4 w-4" strokeWidth="1.75" />
+                      <span className="text-[13px] font-medium">3</span>
+                    </button>
+                    <button type="button" className="flex items-center gap-1.5 hover:text-[#0a66c2] transition-colors rounded p-0.5 -m-0.5" aria-label="Repost">
+                      <Repeat2 className="h-4 w-4" strokeWidth="1.75" />
+                      <span className="text-[13px] font-medium">Repost</span>
+                    </button>
+                    <button type="button" className="flex items-center gap-1.5 hover:text-[#0a66c2] transition-colors rounded p-0.5 -m-0.5" aria-label="Send">
+                      <Send className="h-4 w-4" strokeWidth="1.75" />
+                      <span className="text-[13px] font-medium">Send</span>
+                    </button>
+                  </div>
+                </div>
+              </article>
+
+              {/* Instagram — real post layout: avatar left, username only, caption, then icons + "Liked by" */}
+              <article
+                className="rounded-2xl border border-[#262626] bg-[#1a1a1a] shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col min-h-[280px] relative"
+                style={{ colorScheme: "dark" }}
+              >
+                <button type="button" className="absolute top-3 right-3 p-1.5 rounded hover:bg-white/10 text-[#a8a8a8] hover:text-[#f5f5f5] transition-colors z-10" aria-label="More options">
+                  <MoreHorizontal className="h-4 w-4" />
+                </button>
+                <div className="p-4 sm:p-5 flex flex-col flex-1">
+                  <div className="flex gap-3">
+                    <img
+                      src={SOCIAL_AVATARS.casey}
+                      alt=""
+                      className="h-11 w-11 rounded-full object-cover shrink-0 ring-2 ring-[#363636] ring-offset-2 ring-offset-[#1a1a1a]"
+                    />
+                    <div className="min-w-0 flex-1 pr-6">
+                      <span className="font-semibold text-[14px] text-[#f5f5f5]">casey.drew</span>
+                      <p className="mt-2 text-[14px] text-[#f5f5f5] leading-snug break-words">
+                        Built the MVP in a week. Best thing for solo founders who want to ship and get rewarded for real progress. 🥕
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-auto pt-4 flex items-center gap-4">
+                    <button type="button" className="text-[#f5f5f5] rounded p-0.5 -m-0.5 hover:opacity-80 transition-opacity" aria-label="Like">
+                      <Heart className="h-6 w-6" strokeWidth="1.5" fill="currentColor" />
+                    </button>
+                    <button type="button" className="text-[#f5f5f5] rounded p-0.5 -m-0.5 hover:opacity-80 transition-opacity" aria-label="Comment">
+                      <MessageCircle className="h-6 w-6" strokeWidth="1.75" />
+                    </button>
+                    <button type="button" className="text-[#f5f5f5] rounded p-0.5 -m-0.5 hover:opacity-80 transition-opacity" aria-label="Share">
+                      <Send className="h-5 w-5 -rotate-45" strokeWidth="1.75" />
+                    </button>
+                    <button type="button" className="text-[#f5f5f5] rounded p-0.5 -m-0.5 hover:opacity-80 transition-opacity ml-auto" aria-label="Save">
+                      <Bookmark className="h-6 w-6" strokeWidth="1.75" />
+                    </button>
+                  </div>
+                  <p className="mt-2 text-[14px] text-[#a8a8a8]">
+                    Liked by <span className="text-[#f5f5f5] font-medium">jamie.ships</span> and <span className="text-[#f5f5f5] font-semibold">42 others</span>
+                  </p>
+                </div>
+              </article>
             </div>
           </div>
         </section>
@@ -279,35 +378,55 @@ export default async function HomePage() {
                 See inside Vamo
               </h2>
               <p className="text-muted-foreground text-sm sm:text-base">
-                Your projects, wallet, and builder in one place. Here’s how the app looks.
+                One place to run your projects, grow your rewards, and build what’s next. Peek inside.
               </p>
             </div>
             <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
-              {DASHBOARD_SCREENSHOTS.map(({ src, label, caption, icon: Icon }) => (
-                <div
-                  key={label}
-                  className="group rounded-2xl border-2 border-border bg-card overflow-hidden shadow-xl shadow-black/10 dark:shadow-black/30 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300"
-                >
-                  <div className="relative aspect-[4/3] bg-muted/50 overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={src}
-                      alt={label}
-                      className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-[1.02] transition-transform duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black/80 to-transparent">
-                      <p className="text-white/90 text-sm font-medium">{caption}</p>
+              {DASHBOARD_SCREENSHOTS.map(({ src, label, tagline, caption, icon: Icon, variant }) => {
+                const variantStyles = {
+                  primary: "hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/15",
+                  accent: "hover:border-accent/40 hover:shadow-2xl hover:shadow-amber-500/10 dark:hover:shadow-amber-400/10",
+                  muted: "hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10",
+                };
+                const glowStyles = {
+                  primary: "from-primary/15",
+                  accent: "from-accent/15",
+                  muted: "from-muted-foreground/10",
+                };
+                const iconBg = variant === "primary" ? "bg-primary/15 text-primary" : variant === "accent" ? "bg-accent/15 text-accent" : "bg-muted text-muted-foreground";
+                return (
+                  <div
+                    key={label}
+                    className={`group relative rounded-[1.25rem] border border-border/80 bg-card/80 overflow-hidden shadow-lg shadow-black/5 dark:shadow-black/20 hover:-translate-y-1 transition-all duration-300 ${variantStyles[variant]}`}
+                  >
+                    {/* Soft top glow per card on hover */}
+                    <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-24 bg-gradient-to-b ${glowStyles[variant]} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10 rounded-b-full`} aria-hidden />
+                    <div className="p-3 sm:p-4 pb-0">
+                      <div className="relative rounded-xl overflow-hidden border border-border/60 bg-muted/30 shadow-inner aspect-[4/3]">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={src}
+                          alt={label}
+                          className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-[1.03] transition-transform duration-500"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                          <p className="text-white/95 text-sm leading-snug font-medium drop-shadow-sm">{caption}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4 sm:p-5 flex items-start gap-4 border-t border-border/50 bg-card/50">
+                      <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${iconBg} ring-2 ring-border/50`}>
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <div className="min-w-0 pt-0.5">
+                        <h3 className="font-heading font-semibold text-foreground">{label}</h3>
+                        <p className="text-xs text-muted-foreground mt-0.5 font-medium">{tagline}</p>
+                      </div>
                     </div>
                   </div>
-                  <div className="p-4 sm:p-5 flex items-center gap-3 border-t border-border/50 bg-card">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <h3 className="font-heading font-semibold text-foreground">{label}</h3>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
