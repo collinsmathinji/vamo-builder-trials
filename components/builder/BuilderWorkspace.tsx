@@ -194,7 +194,6 @@ export function BuilderWorkspace({
         </div>
         
         <ThemeToggle />
-        <UserAvatar />
         {/* Wallet total (profiles.pineapple_balance — aggregate of all projects; per-project counts are only in each project’s panels) */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <Link
@@ -243,6 +242,7 @@ export function BuilderWorkspace({
             </Button>
           )}
         </div>
+        <UserAvatar />
       </header>
 
       <div className="flex-1 flex min-h-0">

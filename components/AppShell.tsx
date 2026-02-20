@@ -25,7 +25,6 @@ export function AppShell({
           {nav === "auth" ? (
             <nav className="flex items-center gap-1 sm:gap-2 ml-auto">
               <ThemeToggle />
-              <UserAvatar />
               <Link href="/wallet">
                 <Button variant="ghost" size="sm" className="gap-1.5 sm:gap-2 min-h-9 sm:min-h-10 px-2 sm:px-3">
                   <Wallet className="h-4 w-4 shrink-0" />
@@ -39,6 +38,7 @@ export function AppShell({
                 </Button>
               </Link>
               <SignOutButton />
+              <UserAvatar />
             </nav>
           ) : (
             <nav className="flex items-center gap-1 sm:gap-2">
