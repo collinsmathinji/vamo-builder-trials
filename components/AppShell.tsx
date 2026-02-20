@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Store, Wallet, Plus } from "lucide-react";
 import { VamoLogo } from "@/components/VamoLogo";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { SignOutButton } from "@/components/SignOutButton";
 import { UserAvatar } from "@/components/UserAvatar";
 
 export function AppShell({
@@ -37,7 +36,6 @@ export function AppShell({
                   <span className="hidden sm:inline">New project</span>
                 </Button>
               </Link>
-              <SignOutButton />
               <UserAvatar />
             </nav>
           ) : (
