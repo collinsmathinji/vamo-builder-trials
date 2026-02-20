@@ -13,6 +13,7 @@ import { ListListingDialog } from "./ListListingDialog";
 import { GetOfferDialog } from "./GetOfferDialog";
 import { MessageSquare, BarChart3, ArrowLeft } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { UserAvatar } from "@/components/UserAvatar";
 import { toast } from "sonner";
 
 type Project = {
@@ -34,12 +35,14 @@ export function BuilderWorkspace({
   chatPineapples: initialChatPineapples = 0,
   linksPineapples: initialLinksPineapples = 0,
   tractionPineapples: initialTractionPineapples = 0,
+  userAvatarUrl = null,
 }: {
   project: Project;
   pineappleBalance: number;
   chatPineapples?: number;
   linksPineapples?: number;
   tractionPineapples?: number;
+  userAvatarUrl?: string | null;
 }) {
   const [project, setProject] = useState(initialProject);
   const [pineappleBalance, setPineappleBalance] = useState(initialBalance);
@@ -191,6 +194,7 @@ export function BuilderWorkspace({
         </div>
         
         <ThemeToggle />
+        <UserAvatar />
         {/* Wallet total (profiles.pineapple_balance — aggregate of all projects; per-project counts are only in each project’s panels) */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           <Link
@@ -245,7 +249,7 @@ export function BuilderWorkspace({
         {/* Desktop: 3 panels — Left: Builder Chat | Center: UI Preview | Right: Business Panel */}
         <div className="hidden xl:flex flex-1 min-w-0">
           <aside className="w-[300px] flex-shrink-0 border-r flex flex-col min-h-0 bg-background">
-            <ChatPanel projectId={project.id} onUpdate={onChatUpdate} chatPineapples={chatPineapples} />
+            <ChatPanel projectId={project.id} onUpdate={onChatUpdate} chatPineapples={chatPineapples} userAvatarUrl={userAvatarUrl} />
           </aside>
           <main className="flex-1 min-w-0 flex flex-col min-h-0 border-r">
             <UIPreview url={project.url} screenshotUrl={project.screenshot_url} projectId={project.id} />
@@ -265,7 +269,7 @@ export function BuilderWorkspace({
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[300px] sm:w-[320px] p-0">
-                <ChatPanel projectId={project.id} onUpdate={onChatUpdate} chatPineapples={chatPineapples} />
+                <ChatPanel projectId={project.id} onUpdate={onChatUpdate} chatPineapples={chatPineapples} userAvatarUrl={userAvatarUrl} />
               </SheetContent>
             </Sheet>
           </div>
@@ -292,7 +296,7 @@ export function BuilderWorkspace({
               </TabsTrigger>
             </TabsList>
             <TabsContent value="chat" className="flex-1 min-h-0 mt-0 overflow-hidden data-[state=inactive]:hidden">
-              <ChatPanel projectId={project.id} onUpdate={onChatUpdate} chatPineapples={chatPineapples} />
+              <ChatPanel projectId={project.id} onUpdate={onChatUpdate} chatPineapples={chatPineapples} userAvatarUrl={userAvatarUrl} />
             </TabsContent>
             <TabsContent value="preview" className="flex-1 min-h-0 mt-0 overflow-hidden data-[state=inactive]:hidden">
               <UIPreview url={project.url} screenshotUrl={project.screenshot_url} projectId={project.id} />

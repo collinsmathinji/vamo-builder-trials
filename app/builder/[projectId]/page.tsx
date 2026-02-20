@@ -23,10 +23,11 @@ export default async function BuilderPage({
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("pineapple_balance")
+    .select("pineapple_balance, avatar_url")
     .eq("id", user.id)
     .single();
   const pineappleBalance = profile?.pineapple_balance ?? 0;
+  const userAvatarUrl = profile?.avatar_url ?? null;
 
   const { data: ledgerRows } = await supabase
     .from("reward_ledger")
@@ -51,6 +52,7 @@ export default async function BuilderPage({
       chatPineapples={chatPineapples}
       linksPineapples={linksPineapples}
       tractionPineapples={tractionPineapples}
+      userAvatarUrl={userAvatarUrl}
     />
   );
 }

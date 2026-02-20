@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -45,15 +45,20 @@ function tagVariant(tag: string | null): "feature" | "customer" | "revenue" | "a
   return "general";
 }
 
+const VAMO_LOGO = "/vamo-logo.png";
+
 export function ChatPanel({
   projectId,
   onUpdate,
   chatPineapples = 0,
+  userAvatarUrl = null,
 }: {
   projectId: string;
   onUpdate: () => void;
   /** Pineapples earned from chats (prompts) in this project */
   chatPineapples?: number;
+  /** User profile image URL (e.g. from Google/Supabase) for chat avatar */
+  userAvatarUrl?: string | null;
 }) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -176,9 +181,17 @@ export function ChatPanel({
             {messages.map((m) => (
               <div key={m.id} className="flex gap-2">
                 <Avatar className="h-8 w-8 shrink-0">
-                  <AvatarFallback className="text-xs bg-muted">
-                    {m.role === "user" ? "U" : "V"}
-                  </AvatarFallback>
+                  {m.role === "user" ? (
+                    <>
+                      {userAvatarUrl && <AvatarImage src={userAvatarUrl} alt="You" />}
+                      <AvatarFallback className="text-xs bg-muted">U</AvatarFallback>
+                    </>
+                  ) : (
+                    <>
+                      <AvatarImage src={VAMO_LOGO} alt="Vamo" />
+                      <AvatarFallback className="text-xs bg-muted">V</AvatarFallback>
+                    </>
+                  )}
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -202,6 +215,7 @@ export function ChatPanel({
             {loading && (
               <div className="flex gap-2">
                 <Avatar className="h-8 w-8 shrink-0">
+                  <AvatarImage src={VAMO_LOGO} alt="Vamo" />
                   <AvatarFallback className="text-xs bg-muted">V</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0 space-y-2">
