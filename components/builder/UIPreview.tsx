@@ -147,36 +147,36 @@ export function UIPreview({
             )}
             {!loading && failed ? (
               /* Fallback: iframe failed (e.g. X-Frame-Options) or did not load within 3s */
-              <Card className="w-full max-w-md border-2 shadow-sm overflow-hidden">
-                <CardContent className="p-0">
+              <Card className="w-full flex-1 flex flex-col min-h-0 border-2 shadow-sm overflow-hidden">
+                <CardContent className="p-0 flex-1 flex flex-col min-h-0">
                   {screenshotUrl ? (
-                    <div className="relative">
-                      <img
-                        src={screenshotUrl}
-                        alt="Project screenshot"
-                        className="w-full h-auto max-h-[60vh] object-contain bg-muted/50"
-                      />
-                      <p className="text-xs text-muted-foreground text-center py-2 px-3 border-t bg-muted/30">
+                    <>
+                      <div className="flex-1 min-h-0 flex items-center justify-center bg-muted/30 p-2">
+                        <img
+                          src={screenshotUrl}
+                          alt="Project screenshot"
+                          className="max-w-full max-h-full w-full h-full object-contain"
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground text-center py-2 px-3 border-t bg-muted/30 shrink-0">
                         Live preview unavailable in frame
                       </p>
-                    </div>
+                      <div className="p-3 border-t bg-background shrink-0">
+                        <a href={url} target="_blank" rel="noopener noreferrer" className="block">
+                          <Button variant="outline" className="w-full gap-2">
+                            Open in new tab
+                            <ExternalLink className="h-4 w-4" />
+                          </Button>
+                        </a>
+                      </div>
+                    </>
                   ) : (
-                    <div className="py-8 px-6 text-center">
+                    <div className="flex-1 flex flex-col items-center justify-center py-8 px-6 text-center">
                       <p className="text-sm text-muted-foreground mb-4">
                         Preview unavailable in frame (e.g. site blocks embedding).
                       </p>
                       <a href={url} target="_blank" rel="noopener noreferrer">
                         <Button variant="outline" className="gap-2">
-                          Open in new tab
-                          <ExternalLink className="h-4 w-4" />
-                        </Button>
-                      </a>
-                    </div>
-                  )}
-                  {screenshotUrl && (
-                    <div className="p-3 border-t bg-background">
-                      <a href={url} target="_blank" rel="noopener noreferrer" className="block">
-                        <Button variant="outline" className="w-full gap-2">
                           Open in new tab
                           <ExternalLink className="h-4 w-4" />
                         </Button>
