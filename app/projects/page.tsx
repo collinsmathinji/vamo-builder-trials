@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AppShell } from "@/components/AppShell";
-import { Plus, ArrowRight, TrendingUp, LayoutDashboard } from "lucide-react";
+import { Plus, ArrowRight, TrendingUp, LayoutDashboard, Pencil } from "lucide-react";
 
 export default async function ProjectsPage() {
   const supabase = await createClient();
@@ -52,45 +52,56 @@ export default async function ProjectsPage() {
       ) : (
         <div className="grid gap-4 sm:gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {projects.map((p) => (
-            <Link key={p.id} href={`/builder/${p.id}`} className="block min-w-0">
+            <div key={p.id} className="relative min-w-0">
               <Card className="h-full card-lift rounded-2xl border-2 transition-all hover:shadow-lg hover:border-primary/30 active:scale-[0.99] overflow-hidden group flex flex-col">
-                {/* Thumbnail */}
-                <div className="relative w-full aspect-video bg-muted/50 shrink-0 overflow-hidden">
-                  {p.screenshot_url ? (
-                    <img
-                      src={p.screenshot_url}
-                      alt=""
-                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-muted/80 to-muted/40">
-                      <LayoutDashboard className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground/50" />
-                    </div>
-                  )}
-                </div>
-                <CardHeader className="pb-2 px-4 sm:px-6 pt-4 sm:pt-6 flex-1 min-w-0">
-                  <CardTitle className="font-heading text-base sm:text-lg group-hover:text-primary transition-colors flex items-center justify-between gap-2">
-                    <span className="truncate">{p.name}</span>
-                    <ArrowRight className="h-4 w-4 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </CardTitle>
-                  {p.description && (
-                    <CardDescription className="font-body text-sm line-clamp-2">{p.description}</CardDescription>
-                  )}
-                </CardHeader>
-                <CardContent className="flex flex-col gap-2 px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-muted-foreground min-w-0">
-                      <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary shrink-0" />
-                      <span>{p.progress_score ?? 0}% progress</span>
-                    </span>
-                    <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground/80 shrink-0">{p.status}</span>
+                {/* Edit icon - links to project settings */}
+                <Link
+                  href={`/builder/${p.id}/settings`}
+                  className="absolute top-2 right-2 z-10 flex h-8 w-8 items-center justify-center rounded-lg bg-background/90 text-muted-foreground shadow-sm border border-border/60 hover:bg-muted hover:text-foreground transition-colors"
+                  title="Edit project"
+                  aria-label={`Edit ${p.name}`}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Link>
+                <Link href={`/builder/${p.id}`} className="block flex-1 min-w-0 flex flex-col">
+                  {/* Thumbnail */}
+                  <div className="relative w-full aspect-video bg-muted/50 shrink-0 overflow-hidden">
+                    {p.screenshot_url ? (
+                      <img
+                        src={p.screenshot_url}
+                        alt=""
+                        className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-muted/80 to-muted/40">
+                        <LayoutDashboard className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground/50" />
+                      </div>
+                    )}
                   </div>
-                  <p className="text-xs text-muted-foreground" title="Pineapples earned in this project only">
-                    <span aria-hidden>🍍</span> {pineapplesByProject[p.id] ?? 0} in this project
-                  </p>
-                </CardContent>
+                  <CardHeader className="pb-2 px-4 sm:px-6 pt-4 sm:pt-6 flex-1 min-w-0">
+                    <CardTitle className="font-heading text-base sm:text-lg group-hover:text-primary transition-colors flex items-center justify-between gap-2">
+                      <span className="truncate">{p.name}</span>
+                      <ArrowRight className="h-4 w-4 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </CardTitle>
+                    {p.description && (
+                      <CardDescription className="font-body text-sm line-clamp-2">{p.description}</CardDescription>
+                    )}
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-2 px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-muted-foreground min-w-0">
+                        <TrendingUp className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary shrink-0" />
+                        <span>{p.progress_score ?? 0}% progress</span>
+                      </span>
+                      <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground/80 shrink-0">{p.status}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground" title="Pineapples earned in this project only">
+                      <span aria-hidden>🍍</span> {pineapplesByProject[p.id] ?? 0} in this project
+                    </p>
+                  </CardContent>
+                </Link>
               </Card>
-            </Link>
+            </div>
           ))}
         </div>
       )}
