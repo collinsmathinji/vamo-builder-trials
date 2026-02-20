@@ -178,47 +178,61 @@ export function ChatPanel({
           </p>
         ) : (
           <div className="space-y-4">
-            {messages.map((m) => (
-              <div key={m.id} className="flex gap-2">
-                <Avatar className="h-8 w-8 shrink-0">
-                  {m.role === "user" ? (
-                    <>
-                      {userAvatarUrl && <AvatarImage src={userAvatarUrl} alt="You" />}
-                      <AvatarFallback className="text-xs bg-muted">U</AvatarFallback>
-                    </>
-                  ) : (
-                    <>
-                      <AvatarImage src={VAMO_LOGO} alt="Vamo" />
-                      <AvatarFallback className="text-xs bg-muted">V</AvatarFallback>
-                    </>
-                  )}
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    {m.tag && m.tag !== "general" && (
-                      <Badge variant={tagVariant(m.tag)} className="text-xs">
-                        {m.tag}
-                      </Badge>
+            {messages.map((m) => {
+              const isUser = m.role === "user";
+              return (
+                <div
+                  key={m.id}
+                  className={`flex gap-2 items-start ${isUser ? "flex-row-reverse" : ""}`}
+                >
+                  <Avatar className="h-8 w-8 shrink-0">
+                    {isUser ? (
+                      <>
+                        {userAvatarUrl && <AvatarImage src={userAvatarUrl} alt="You" />}
+                        <AvatarFallback className="text-xs bg-muted">U</AvatarFallback>
+                      </>
+                    ) : (
+                      <>
+                        <AvatarImage src={VAMO_LOGO} alt="Vamo" />
+                        <AvatarFallback className="text-xs bg-muted">V</AvatarFallback>
+                      </>
                     )}
-                    {m.pineapples_earned > 0 && (
-                      <span className="text-xs text-amber-600 dark:text-amber-500 font-medium flex items-center gap-1">
-                        <span>🍍</span>
-                        <span>+{m.pineapples_earned}</span>
-                      </span>
-                    )}
+                  </Avatar>
+                  <div
+                    className={`min-w-0 max-w-[85%] rounded-2xl px-3 py-2 ${
+                      isUser
+                        ? "bg-primary/15 dark:bg-primary/25 rounded-tr-sm"
+                        : "bg-muted/60 dark:bg-muted/40 border border-border/50 rounded-tl-sm"
+                    }`}
+                  >
+                    <div className={`flex items-center gap-2 flex-wrap ${isUser ? "justify-end" : ""}`}>
+                      {m.tag && m.tag !== "general" && (
+                        <Badge variant={tagVariant(m.tag)} className="text-xs">
+                          {m.tag}
+                        </Badge>
+                      )}
+                      {m.pineapples_earned > 0 && (
+                        <span className="text-xs text-amber-600 dark:text-amber-500 font-medium flex items-center gap-1">
+                          <span>🍍</span>
+                          <span>+{m.pineapples_earned}</span>
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm mt-0.5 whitespace-pre-wrap">{m.content}</p>
+                    <p className={`text-xs text-muted-foreground mt-1 ${isUser ? "text-right" : ""}`}>
+                      {formatRelativeTime(m.created_at)}
+                    </p>
                   </div>
-                  <p className="text-sm mt-0.5 whitespace-pre-wrap">{m.content}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{formatRelativeTime(m.created_at)}</p>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             {loading && (
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-start">
                 <Avatar className="h-8 w-8 shrink-0">
                   <AvatarImage src={VAMO_LOGO} alt="Vamo" />
                   <AvatarFallback className="text-xs bg-muted">V</AvatarFallback>
                 </Avatar>
-                <div className="flex-1 min-w-0 space-y-2">
+                <div className="min-w-0 max-w-[85%] rounded-2xl rounded-tl-sm px-3 py-2 bg-muted/60 dark:bg-muted/40 border border-border/50 space-y-2">
                   <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                     <span className="inline-flex gap-1">
                       <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60 animate-bounce [animation-delay:-0.3s]" />
