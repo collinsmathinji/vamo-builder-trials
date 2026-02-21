@@ -65,6 +65,8 @@ In Supabase Dashboard → Table Editor → `profiles`, find your user row (by em
 - UI Preview iframe may be blocked by some sites (X-Frame-Options); fallback shows screenshot or “Open in new tab”.
 - Listing description is user-edited; optional AI-generated description can be added later.
 
+
+
 ## Definition of Done (acceptance)
 
 A new user should be able to: sign up with email/password; create a project; use the 3-panel builder; send a chat prompt and get an AI response; see the prompt in the activity timeline and earn pineapples; tag a prompt (e.g. Feature); link GitHub in the business panel and earn pineapples; see progress score and traction signals update; edit "Why I Built This"; view UI preview (iframe or fallback); open the wallet and redeem if balance ≥ 50; get a Vamo Offer and list for sale; view the public marketplace and listing detail. An admin can open `/admin`, see dashboard counts, pending redemptions (with user email), and mark redemptions fulfilled or failed. All pages are responsive; no service role key is used; RLS protects data.
