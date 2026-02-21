@@ -15,9 +15,42 @@ import { Button } from "@/components/ui/button";
 import { AdminActions } from "./AdminActions";
 import { AdminAnalyticsFilters } from "./AdminAnalyticsFilters";
 import { AdminNav } from "./AdminNav";
+import { AdminOverviewCharts } from "./AdminOverviewCharts";
 import { VamoLogo } from "@/components/VamoLogo";
 
 const ANALYTICS_PAGE_SIZE = 20;
+const ACTIVITY_DAYS = 14;
+
+function getDateKey(iso: string): string {
+  return iso.slice(0, 10);
+}
+
+function buildDailyCounts(
+  profileDates: string[],
+  projectDates: string[]
+): { date: string; users: number; projects: number }[] {
+  const start = new Date();
+  start.setDate(start.getDate() - ACTIVITY_DAYS);
+  start.setHours(0, 0, 0, 0);
+  const byDate: Record<string, { users: number; projects: number }> = {};
+  for (let i = 0; i < ACTIVITY_DAYS; i++) {
+    const d = new Date(start);
+    d.setDate(d.getDate() + i);
+    const key = d.toISOString().slice(0, 10);
+    byDate[key] = { users: 0, projects: 0 };
+  }
+  profileDates.forEach((created_at) => {
+    const key = getDateKey(created_at);
+    if (byDate[key] != null) byDate[key].users += 1;
+  });
+  projectDates.forEach((created_at) => {
+    const key = getDateKey(created_at);
+    if (byDate[key] != null) byDate[key].projects += 1;
+  });
+  return Object.entries(byDate)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([date, { users, projects }]) => ({ date, users, projects }));
+}
 
 export default async function AdminPage({
   searchParams,
@@ -53,6 +86,18 @@ export default async function AdminPage({
 
   const totalEarned = (ledgerSum ?? []).filter((r) => r.reward_amount > 0).reduce((a, r) => a + r.reward_amount, 0);
   const totalRedeemed = (redemptionsSum ?? []).reduce((a, r) => a + r.amount, 0);
+
+  const activitySince = new Date();
+  activitySince.setDate(activitySince.getDate() - ACTIVITY_DAYS);
+  activitySince.setHours(0, 0, 0, 0);
+  const [{ data: recentProfiles }, { data: recentProjects }] = await Promise.all([
+    supabase.from("profiles").select("created_at").gte("created_at", activitySince.toISOString()),
+    supabase.from("projects").select("created_at").gte("created_at", activitySince.toISOString()),
+  ]);
+  const dailyCounts = buildDailyCounts(
+    (recentProfiles ?? []).map((p) => p.created_at),
+    (recentProjects ?? []).map((p) => p.created_at)
+  );
 
   const { data: pendingRedemptions } = await supabase
     .from("redemptions")
@@ -160,6 +205,17 @@ export default async function AdminPage({
               <CardContent><span className="font-heading text-3xl font-bold">{listingsCount ?? 0}</span></CardContent>
             </Card>
           </div>
+          <AdminOverviewCharts
+            stats={{
+              users: usersCount ?? 0,
+              projects: projectsCount ?? 0,
+              prompts: promptsCount ?? 0,
+              earned: totalEarned,
+              redeemed: totalRedeemed,
+              listings: listingsCount ?? 0,
+            }}
+            dailyCounts={dailyCounts}
+          />
         </section>
 
         <section id="redemptions" className="mt-12">
