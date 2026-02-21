@@ -103,7 +103,7 @@ export function AdminOverviewCharts({ stats, dailyCounts }: AdminOverviewChartsP
                   border: "1px solid hsl(var(--border))",
                   background: "hsl(var(--card))",
                 }}
-                formatter={(value: number) => [value, ""]}
+                formatter={(value: number | undefined) => [value ?? "", ""]}
                 labelFormatter={(label) => OVERVIEW_LABELS[label] ?? label}
               />
               <Bar dataKey="value" radius={[0, 4, 4, 0]} maxBarSize={28}>
@@ -146,7 +146,7 @@ export function AdminOverviewCharts({ stats, dailyCounts }: AdminOverviewChartsP
                     border: "1px solid hsl(var(--border))",
                     background: "hsl(var(--card))",
                   }}
-                  formatter={(value: number) => [`🍍 ${value}`, ""]}
+                  formatter={(value: number | undefined) => [`🍍 ${value ?? 0}`, ""]}
                 />
                 <Legend />
               </PieChart>
