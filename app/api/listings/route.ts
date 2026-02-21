@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { checkContentRateLimit } from "@/lib/rate-limit";
 import { NextResponse } from "next/server";
 
 /** GET /api/listings?projectId= — preview for listing dialog: title, AI description, valuation, timeline snapshot, metrics */
@@ -10,6 +11,14 @@ export async function GET(req: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const rate = checkContentRateLimit(user.id);
+  if (!rate.ok) {
+    return NextResponse.json(
+      { error: "Too many requests", retryAfter: rate.retryAfter },
+      { status: 429, headers: rate.retryAfter ? { "Retry-After": String(rate.retryAfter) } : undefined }
+    );
+  }
 
   const { data: project } = await supabase
     .from("projects")
@@ -72,6 +81,7 @@ export async function GET(req: Request) {
           },
           { role: "user", content: JSON.stringify(payload) },
         ],
+        max_tokens: 300,
       });
       const text = completion.choices[0]?.message?.content?.trim();
       if (text) descriptionSuggestion = text;

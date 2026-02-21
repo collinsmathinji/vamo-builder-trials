@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { checkContentRateLimit } from "@/lib/rate-limit";
+import { offerResponseSchema } from "@/lib/openai-schemas";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -9,6 +11,14 @@ export async function POST(req: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const rate = checkContentRateLimit(user.id);
+  if (!rate.ok) {
+    return NextResponse.json(
+      { error: "Too many requests", retryAfter: rate.retryAfter },
+      { status: 429, headers: rate.retryAfter ? { "Retry-After": String(rate.retryAfter) } : undefined }
+    );
+  }
 
   const { data: project } = await supabase
     .from("projects")
@@ -86,15 +96,11 @@ export async function POST(req: Request) {
           },
         ],
         response_format: { type: "json_object" },
+        max_tokens: 600,
       });
       const text = completion.choices[0]?.message?.content;
       if (text) {
-        const parsed = JSON.parse(text) as {
-          offer_low?: number;
-          offer_high?: number;
-          reasoning?: string;
-          signals_used?: string[];
-        };
+        const parsed = offerResponseSchema.parse(JSON.parse(text));
         offerLow = Math.max(0, parsed.offer_low ?? 0);
         offerHigh = Math.max(offerLow, parsed.offer_high ?? 0);
         reasoning = parsed.reasoning ?? reasoning;

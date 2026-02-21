@@ -24,8 +24,8 @@ A Lovable-style builder where founders iterate on startup UI and business progre
 
    Copy `.env.local.example` to `.env.local` and set:
 
-   - `NEXT_PUBLIC_SUPABASE_URL` – your Supabase project URL
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` – your Supabase anon (public) key
+   - `VITE_SUPABASE_URL` – your Supabase project URL
+   - `VITE_SUPABASE_ANON_KEY` (or `VITE_SUPABASE_PUBLISHABLE_KEY`) – your Supabase anon (public) key
    - `OPENAI_API_KEY` – your OpenAI API key
 
    The app uses placeholder Supabase URL/key at build time if env is missing so `next build` succeeds; at runtime (e.g. Vercel or with `.env.local`) you must set the real values.

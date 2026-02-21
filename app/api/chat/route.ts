@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { checkContentRateLimit } from "@/lib/rate-limit";
+import { chatResponseSchema } from "@/lib/openai-schemas";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -12,6 +14,14 @@ export async function POST(req: Request) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const rate = checkContentRateLimit(user.id);
+    if (!rate.ok) {
+      return NextResponse.json(
+        { error: "Too many requests", retryAfter: rate.retryAfter },
+        { status: 429, headers: rate.retryAfter ? { "Retry-After": String(rate.retryAfter) } : undefined }
+      );
+    }
 
     const { data: project } = await supabase
       .from("projects")
@@ -95,20 +105,11 @@ Constraints (enforced):
             { role: "user", content: userContent },
           ],
           response_format: { type: "json_object" },
+          max_tokens: 500,
         });
         const text = completion.choices[0]?.message?.content;
         if (text) {
-          const parsed = JSON.parse(text) as {
-            reply?: string;
-            intent?: string;
-            business_update?: {
-              progress_delta?: number;
-              traction_signal?: string | null;
-              valuation_adjustment?: string;
-              valuation_low?: number;
-              valuation_high?: number;
-            };
-          };
+          const parsed = chatResponseSchema.parse(JSON.parse(text));
           reply = parsed.reply ?? reply;
           intent = parsed.intent ?? "general";
           const bu = parsed.business_update;
